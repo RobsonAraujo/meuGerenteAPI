@@ -12,6 +12,8 @@ const authMiddleware = require('../middleware/auth')();
 // BUSINNES RULES
 
 router.get('/compareExponencialGrowth/:id', controllers.insightsController.compareExponencialGrowth);
+router.get('/compareCompetitive/:id/:segment', controllers.insightsController.compareCompetitive);
+
 
 
 

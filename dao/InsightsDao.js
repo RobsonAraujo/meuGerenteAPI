@@ -23,7 +23,42 @@ module.exports = {
             return { message, totalActualMonth, totalLastMonth }
         })()
 
+    },
 
+    compareCompetitive(id, segment) {
+        return (async () => {
+
+            const totalActualMonth = await knex.select(`valor`).from('transacoes')
+                .where({ id_microempreendedor: id })
+                .andWhereRaw(`MONTH(date) = MONTH(CURRENT_DATE())`)
+
+
+            const usersOfSegment = await knex.select('valor').from('transacoes')
+                .where({ categoria: segment , tipo_transacao : 'credito'})
+                .andWhereRaw(`MONTH(date) = MONTH(CURRENT_DATE())`)
+                .andWhereNot({ id_microempreendedor: id })
+
+
+            let totalValue = 0;
+            usersOfSegment.forEach(item => {
+                totalValue = totalValue + Number(item.valor)
+            });
+
+            const average = totalValue / usersOfSegment.length
+
+
+            let message;
+
+            if (parseInt(average) < 50 ) {
+                message = "Você está ficando para trás, vamos criar estrategias para o proximo mês!"
+            } else {
+                message = "Isso ai, você está bem em relação ao seus concorrentes, continue assim!"
+            }
+
+
+            return { percent: parseInt(average) + "%", message }
+
+        })()
 
     }
 }
